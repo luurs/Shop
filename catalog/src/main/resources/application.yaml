@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: catalog_db
+  datasource:
+    url: jdbc:postgresql://localhost:5434/catalog_db
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+  kafka:
+    topics:
+      invalidate-goods-cache: catalog.invalidate-goods-cache
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+server:
+  port: 8084

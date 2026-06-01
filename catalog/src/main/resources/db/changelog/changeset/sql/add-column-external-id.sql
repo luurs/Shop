@@ -1,0 +1,2 @@
+ALTER TABLE IF EXISTS good
+    ADD COLUMN external_id varchar(100) NOT NULL UNIQUE;

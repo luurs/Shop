@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      author: lera
+      id: create-table-good
+      changes:
+        - sqlFile:
+            path: sql/create-table-good.sql
+            relativeToChangelogFile: true

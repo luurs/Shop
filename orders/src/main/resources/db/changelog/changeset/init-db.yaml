@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      author: lera
+      id: create-table-orders
+      changes:
+        - sqlFile:
+            path: sql/create-table-orders.sql
+            relativeToChangelogFile: true
+
+  - changeSet:
+      author: lera
+      id: create-table-orders-good
+      changes:
+        - sqlFile:
+            path: sql/create-table-orders-good.sql
+            relativeToChangelogFile: true
+
+  - changeSet:
+      author: lera
+      id: add-column-paymentId
+      changes:
+        - sqlFile:
+            path: sql/add-column-paymentId.sql
+            relativeToChangelogFile: true

@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      author: lera
+      id: add-column-external-id
+      changes:
+        - sqlFile:
+            path: sql/add-column-external-id.sql
+            relativeToChangelogFile: true
