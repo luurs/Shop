@@ -1,5 +1,6 @@
 package com.lera.orders.clients;
 
+import com.lera.orders.configuration.CatalogClientConfig;
 import com.lera.orders.dto.catalog.GetGoodsListRequest;
 import com.lera.orders.dto.catalog.GetGoodsListResponse;
 import org.springframework.cloud.openfeign.FeignClient;

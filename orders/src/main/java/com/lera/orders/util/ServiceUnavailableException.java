@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public class ServiceUnavailableException extends ApiException{
 
-    public ServiceUnavailableException(String message, HttpStatus status) {
-        super(message, status);
+    public ServiceUnavailableException(String message) {
+        super(message, HttpStatus.SERVICE_UNAVAILABLE);
     }
 }
