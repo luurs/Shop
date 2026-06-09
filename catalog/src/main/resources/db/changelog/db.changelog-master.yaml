@@ -6,3 +6,7 @@ databaseChangeLog:
   - include:
       file: changeset/add-column.yaml
       relativeToChangelogFile: true
+
+  - include:
+      file: changeset/create-table-outbox-message.yaml
+      relativeToChangelogFile: true
