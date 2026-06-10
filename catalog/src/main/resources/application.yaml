@@ -22,5 +22,9 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.add.type.headers: false
+outbox:
+  scheduler:
+    delay: 5000
+    batch-size: 50
 server:
   port: 8084
