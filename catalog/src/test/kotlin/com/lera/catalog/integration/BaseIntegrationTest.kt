@@ -72,16 +72,12 @@ abstract class BaseIntegrationTest {
         return KafkaConsumer(props)
     }
 
-    /**
-     * Консьюмер, спозиционированный в текущий конец топика, — видит только сообщения,
-     * произведённые ПОСЛЕ его создания. Изолирует тест от чужих сообщений в общем топике.
-     */
     protected fun consumerAtTopicEnd(topic: String): KafkaConsumer<String, String> {
         val consumer = createTestConsumer()
         val partition = TopicPartition(topic, 0)
         consumer.assign(listOf(partition))
         consumer.seekToEnd(listOf(partition))
-        consumer.position(partition) // форсируем применение seekToEnd (он ленивый)
+        consumer.position(partition)
         return consumer
     }
 }
