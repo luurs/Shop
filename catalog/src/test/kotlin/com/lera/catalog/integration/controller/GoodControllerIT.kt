@@ -5,18 +5,24 @@ import com.lera.catalog.dto.GetGoodsListRequest
 import com.lera.catalog.dto.GetGoodsListResponse
 import com.lera.catalog.integration.BaseIntegrationTest
 import com.lera.catalog.model.GoodEntity
+import com.lera.catalog.model.OutboxMessageStatus
+import com.lera.catalog.repository.OutboxMessageRepository
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import org.apache.kafka.clients.consumer.ConsumerRecords
-import org.assertj.core.api.AssertionsForClassTypes.assertThat
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.DataClassRowMapper
 import java.math.BigDecimal
 import java.time.Duration
 
 class GoodControllerIT : BaseIntegrationTest() {
+
+    @Autowired
+    lateinit var outboxMessageRepository: OutboxMessageRepository
 
     @Test
     @DisplayName("Проверка создания товара + запись в кафку")
@@ -30,23 +36,20 @@ class GoodControllerIT : BaseIntegrationTest() {
             .statusCode(200)
             .body("id", equalTo(1))
 
-        createTestConsumer().use { consumer ->
-            consumer.subscribe(listOf("catalog.invalidate-goods-cache"))
-            val records: ConsumerRecords<String, String> = consumer.poll(Duration.ofSeconds(5))
-            assertThat(records.count()).isEqualTo(1)
-
-            val messageJson = records.iterator().next().value()
-            assertThat(messageJson).contains("\"id\":1")
-            assertThat(messageJson).contains("\"externalId\":\"P123ZA\"")
-        }
-
         val good = findAllGoods().first()
-
+        assertThat(good.externalId).isEqualTo("P123ZA")
         assertThat(good.id).isEqualTo(1L)
         assertThat(good.name).isEqualTo("pizza")
         assertThat(good.description).isEqualTo("tasty pizza")
         assertThat(good.price).isEqualTo(BigDecimal("100.00"))
-        assertThat(good.externalId).isEqualTo("P123ZA")
+
+        val outbox = outboxMessageRepository.findAll().toList()
+        assertThat(outbox).hasSize(1)
+        val row = outbox.first()
+        assertThat(row.status).isEqualTo(OutboxMessageStatus.NEW)
+        assertThat(row.eventType).isEqualTo("GOODS_INVALIDATE")
+        assertThat(row.payload).contains("\"id\":1")
+        assertThat(row.payload).contains("\"externalId\":\"P123ZA\"")
     }
 
     @Test

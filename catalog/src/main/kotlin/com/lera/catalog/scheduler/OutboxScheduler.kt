@@ -27,7 +27,6 @@ class OutboxScheduler(
         val batch = outboxMessageRepository.findNew(batchSize)
         if (batch.isEmpty()) return
 
-
         for (msg in batch) {
             try {
                 val message = objectMapper.readValue(msg.payload, GoodsInvalidateMessage::class.java)
