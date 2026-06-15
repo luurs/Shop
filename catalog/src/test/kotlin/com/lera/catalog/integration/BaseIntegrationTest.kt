@@ -3,6 +3,7 @@ package com.lera.catalog.integration
 import io.restassured.RestAssured
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
+import org.apache.kafka.common.TopicPartition
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -38,6 +39,7 @@ abstract class BaseIntegrationTest {
             registry.add("spring.datasource.username", PSQL_CONTAINER::getUsername)
             registry.add("spring.datasource.password", PSQL_CONTAINER::getPassword)
             registry.add("spring.kafka.bootstrap-servers", KAFKA_CONTAINER::getBootstrapServers)
+            registry.add("outbox.scheduler.enabled") {false}
         }
     }
 
@@ -56,6 +58,7 @@ abstract class BaseIntegrationTest {
     fun cleanUp() {
         jdbcTemplate.execute("truncate table good cascade;")
         jdbcTemplate.execute("ALTER SEQUENCE good_id_seq RESTART WITH 1;")
+        jdbcTemplate.execute("truncate table outbox_message restart identity;")
     }
 
     protected fun createTestConsumer(): KafkaConsumer<String, String> {
@@ -67,5 +70,14 @@ abstract class BaseIntegrationTest {
             ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
         )
         return KafkaConsumer(props)
+    }
+
+    protected fun consumerAtTopicEnd(topic: String): KafkaConsumer<String, String> {
+        val consumer = createTestConsumer()
+        val partition = TopicPartition(topic, 0)
+        consumer.assign(listOf(partition))
+        consumer.seekToEnd(listOf(partition))
+        consumer.position(partition)
+        return consumer
     }
 }

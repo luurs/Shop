@@ -9,19 +9,13 @@ import org.springframework.stereotype.Service
 @Service
 class KafkaProducerService(
     private val kafkaTemplate: KafkaTemplate<String, GoodsInvalidateMessage>,
-    @param:Value("\${spring.kafka.topics.invalidate-goods-cache}") private val invalidateGoodsCacheTopic: String
+    @param:Value("\${spring.kafka.topics.invalidate-goods-cache}")
+    private val invalidateGoodsCacheTopic: String
 ) {
     private val log = LoggerFactory.getLogger(KafkaProducerService::class.java)
 
     fun sendInvalidateMessage(message: GoodsInvalidateMessage) {
-        kafkaTemplate.send(invalidateGoodsCacheTopic, message)
-            .whenComplete { result, ex ->
-                if (ex != null) {
-                    log.error("Failed to send goods invalidation message: {}", ex.message)
-                } else {
-                    log.debug("Goods invalidation sent, offset = {}", result.recordMetadata.offset())
-                }
-            }
-        kafkaTemplate.flush()
+        val result = kafkaTemplate.send(invalidateGoodsCacheTopic, message).get()
+        log.debug("Goods invalidation sent, offset = {}", result.recordMetadata.offset())
     }
 }
