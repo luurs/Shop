@@ -3,6 +3,7 @@ package com.lera.catalog.service
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.lera.catalog.dto.orders.GoodsInvalidateMessage
 import com.lera.catalog.dto.orders.GoodsItem
+import com.lera.catalog.model.EventType
 import com.lera.catalog.model.GoodEntity
 import com.lera.catalog.model.OutboxMessageEntity
 import com.lera.catalog.repository.GoodRepository
@@ -42,7 +43,7 @@ class GoodService(
 
         outboxMessageRepository.save(
             OutboxMessageEntity(
-                eventType = "GOODS_INVALIDATE",
+                eventType = EventType.GOODS_INVALIDATE,
                 payload = objectMapper.writeValueAsString(message)
             )
         )

@@ -5,7 +5,6 @@ import com.lera.catalog.dto.orders.GoodsInvalidateMessage
 import com.lera.catalog.model.OutboxMessageStatus
 import com.lera.catalog.repository.OutboxMessageRepository
 import com.lera.catalog.service.KafkaProducerService
-import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
@@ -22,7 +21,7 @@ class OutboxScheduler(
 ) {
     private val logger = KotlinLogging.logger {}
 
-    @Scheduled(fixedDelayString = "\${outbox.scheduler.delay:5000}")
+    @Scheduled(fixedDelayString = "\${outbox.scheduler.publish-delay:5000}")
     fun publishOutbox() {
         val batch = outboxMessageRepository.findNew(batchSize)
         if (batch.isEmpty()) return
@@ -36,5 +35,10 @@ class OutboxScheduler(
                 logger.error(e) { "Message (id = ${msg.id}) could not be published" }
             }
         }
+    }
+
+    @Scheduled(fixedDelayString = "\${outbox.scheduler.delete-delay:5000}")
+    fun cleanUpOutbox() {
+        outboxMessageRepository.deleteSent()
     }
 }

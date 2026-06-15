@@ -10,7 +10,7 @@ data class OutboxMessageEntity(
     @Id
     val id: Long? = null,
     @Column("event_type")
-    val eventType: String,
+    val eventType: EventType,
     val payload: String,
     @Column("created_at")
     val createdAt: Instant = Instant.now(),
