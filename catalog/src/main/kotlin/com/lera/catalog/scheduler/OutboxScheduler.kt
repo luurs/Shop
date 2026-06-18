@@ -9,6 +9,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 
 @Component
@@ -21,6 +22,7 @@ class OutboxScheduler(
 ) {
     private val logger = KotlinLogging.logger {}
 
+    @Transactional
     @Scheduled(fixedDelayString = "\${outbox.scheduler.publish-delay:5000}")
     fun publishOutbox() {
         val batch = outboxMessageRepository.findNew(batchSize)
