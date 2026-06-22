@@ -17,6 +17,5 @@ interface GoodRepository :
     @Query("SELECT * FROM good WHERE external_id IN (:externalIds) AND deleted = 'false'")
     fun findByExternalIdIn(externalIds: List<String>): List<GoodEntity>
 
-    @Query("SELECT * FROM good WHERE deleted = :deleted")
     fun findAllByDeleted(deleted: Boolean, pageable: Pageable): Page<GoodEntity>
 }

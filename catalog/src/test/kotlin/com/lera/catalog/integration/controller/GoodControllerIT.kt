@@ -4,6 +4,7 @@ import com.lera.catalog.dto.goodController.CreateGoodRequest
 import com.lera.catalog.dto.goodController.GetGoodsListRequest
 import com.lera.catalog.dto.goodController.GetGoodsListResponse
 import com.lera.catalog.integration.BaseIntegrationTest
+import com.lera.catalog.model.EventType
 import com.lera.catalog.model.GoodEntity
 import com.lera.catalog.model.OutboxMessageStatus
 import com.lera.catalog.repository.OutboxMessageRepository
@@ -45,7 +46,7 @@ class GoodControllerIT : BaseIntegrationTest() {
         assertThat(outbox).hasSize(1)
         val row = outbox.first()
         assertThat(row.status).isEqualTo(OutboxMessageStatus.NEW)
-        assertThat(row.eventType).isEqualTo("GOODS_INVALIDATE")
+        assertThat(row.eventType).isEqualTo(EventType.GOODS_INVALIDATE)
         assertThat(row.payload).contains("\"id\":1")
         assertThat(row.payload).contains("\"externalId\":\"P123ZA\"")
     }
