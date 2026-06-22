@@ -10,3 +10,7 @@ databaseChangeLog:
   - include:
       file: changeset/create-table-outbox-message.yaml
       relativeToChangelogFile: true
+
+  - include:
+      file: changeset/add-column-deleted.yaml
+      relativeToChangelogFile: true

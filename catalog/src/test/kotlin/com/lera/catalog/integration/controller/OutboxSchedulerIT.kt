@@ -1,6 +1,6 @@
 package com.lera.catalog.integration.controller
 
-import com.lera.catalog.dto.CreateGoodRequest
+import com.lera.catalog.dto.goodController.CreateGoodRequest
 import com.lera.catalog.integration.BaseIntegrationTest
 import com.lera.catalog.model.OutboxMessageStatus
 import com.lera.catalog.repository.OutboxMessageRepository

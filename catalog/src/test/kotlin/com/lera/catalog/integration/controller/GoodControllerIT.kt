@@ -1,15 +1,14 @@
 package com.lera.catalog.integration.controller
 
-import com.lera.catalog.dto.CreateGoodRequest
-import com.lera.catalog.dto.GetGoodsListRequest
-import com.lera.catalog.dto.GetGoodsListResponse
+import com.lera.catalog.dto.goodController.CreateGoodRequest
+import com.lera.catalog.dto.goodController.GetGoodsListRequest
+import com.lera.catalog.dto.goodController.GetGoodsListResponse
 import com.lera.catalog.integration.BaseIntegrationTest
 import com.lera.catalog.model.GoodEntity
 import com.lera.catalog.model.OutboxMessageStatus
 import com.lera.catalog.repository.OutboxMessageRepository
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
-import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.DisplayName
@@ -17,7 +16,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.DataClassRowMapper
 import java.math.BigDecimal
-import java.time.Duration
 
 class GoodControllerIT : BaseIntegrationTest() {
 
