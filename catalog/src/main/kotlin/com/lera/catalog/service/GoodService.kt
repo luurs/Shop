@@ -1,6 +1,8 @@
 package com.lera.catalog.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.lera.catalog.dto.goodController.GetGoodResponse
+import com.lera.catalog.dto.goodController.GetGoodsListResponse
 import com.lera.catalog.dto.goodController.PageableGetGoodsListResponse
 import com.lera.catalog.dto.orders.GoodsInvalidateMessage
 import com.lera.catalog.dto.orders.GoodsItem
@@ -49,12 +51,15 @@ class GoodService(
         return result
     }
 
-    fun findByExternalId(externalIds: List<String>): List<GoodEntity> =
-        goodRepository.findByExternalIdIn(externalIds)
+    fun findByExternalId(externalIds: List<String>): GetGoodsListResponse {
+        val goodsEntities = goodRepository.findByExternalIdIn(externalIds)
+        return goodMapper.toGoodDtoList(goodsEntities)
+    }
 
-    fun findByExternalId(externalId: String): GoodEntity {
-        return goodRepository.findByExternalId(externalId)
+    fun findByExternalId(externalId: String): GetGoodResponse {
+        val goodEntity = goodRepository.findByExternalId(externalId)
             ?: throw GoodNotFoundException(externalId)
+        return goodMapper.fromEntityToGoodDto(goodEntity)
     }
 
     @Transactional

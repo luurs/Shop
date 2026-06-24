@@ -7,7 +7,6 @@ import com.lera.catalog.dto.goodController.GetGoodsListRequest
 import com.lera.catalog.dto.goodController.GetGoodsListResponse
 import com.lera.catalog.dto.goodController.PageableGetGoodsListResponse
 import com.lera.catalog.dto.goodController.UpdateGoodRequest
-import com.lera.catalog.mapper.GoodMapper
 import com.lera.catalog.service.GoodService
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -23,8 +22,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/goods")
 class GoodController(
-    val goodService: GoodService,
-    val goodMapper: GoodMapper
+    val goodService: GoodService
 ) {
 
     @PostMapping("/createGood")
@@ -35,14 +33,12 @@ class GoodController(
 
     @PostMapping("/getGoodsList")
     fun getGoodsList(@RequestBody request: GetGoodsListRequest): GetGoodsListResponse {
-        val goods = goodService.findByExternalId(request.externalIds)
-        return goodMapper.toGoodDtoList(goods)
+        return goodService.findByExternalId(request.externalIds)
     }
 
     @GetMapping("/{externalId}")
     fun getGood(@PathVariable externalId: String): GetGoodResponse {
-        val good = goodService.findByExternalId(externalId)
-        return goodMapper.fromEntityToGoodDto(good)
+        return goodService.findByExternalId(externalId)
     }
 
     @PutMapping("/{externalId}")
