@@ -13,5 +13,6 @@ data class GoodEntity(
     @Column("external_id")
     val externalId: String,
     @Id
-    val id: Long? = null
+    val id: Long? = null,
+    val deleted: Boolean = false
 )
