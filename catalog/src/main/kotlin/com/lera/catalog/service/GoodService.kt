@@ -13,6 +13,8 @@ import com.lera.catalog.model.OutboxMessageEntity
 import com.lera.catalog.repository.GoodRepository
 import com.lera.catalog.repository.OutboxMessageRepository
 import com.lera.catalog.util.GoodNotFoundException
+import com.lera.catalog.util.StockInvalidateException
+import com.lera.catalog.validator.CatalogValidator
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -24,17 +26,21 @@ class GoodService(
     private val goodRepository: GoodRepository,
     private val outboxMessageRepository: OutboxMessageRepository,
     private val objectMapper: ObjectMapper,
-    private val goodMapper: GoodMapper
+    private val goodMapper: GoodMapper,
+    private val catalogValidator: CatalogValidator
 ) {
 
     @Transactional
-    fun add(name: String, description: String, price: BigDecimal, externalId: String): GoodEntity {
+    fun add(name: String, description: String, price: BigDecimal, externalId: String, stock: Int): GoodEntity {
+        catalogValidator.validateStock(stock)
+
         val result = goodRepository.findByExternalId(externalId)?.let { existing ->
             goodRepository.save(
                 existing.copy(
                     name = name,
                     description = description,
-                    price = price
+                    price = price,
+                    stock = existing.stock + stock
                 )
             )
         } ?: goodRepository.save(
@@ -42,7 +48,8 @@ class GoodService(
                 name = name,
                 description = description,
                 price = price,
-                externalId = externalId
+                externalId = externalId,
+                stock = stock
             )
         )
 
@@ -63,12 +70,15 @@ class GoodService(
     }
 
     @Transactional
-    fun update(externalId: String, name: String, description: String, price: BigDecimal) {
+    fun update(externalId: String, name: String, description: String, price: BigDecimal, stock: Int) {
+        catalogValidator.validateStock(stock)
+
         val updated = goodRepository.findByExternalId(externalId)?.let { existing ->
             val updated = existing.copy(
                 name = name,
                 description = description,
-                price = price
+                price = price,
+                stock = stock
             )
             goodRepository.save(updated)
         } ?: throw GoodNotFoundException(externalId)

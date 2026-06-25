@@ -6,7 +6,8 @@ data class CreateGoodRequest(
     val name: String,
     val description: String,
     val price: BigDecimal,
-    val externalId: String
+    val externalId: String,
+    val stock: Int
 )
 
 data class CreateGoodResponse(val id: Long)

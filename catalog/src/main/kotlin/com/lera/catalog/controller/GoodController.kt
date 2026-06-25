@@ -27,7 +27,7 @@ class GoodController(
 
     @PostMapping("/createGood")
     fun addGood(@RequestBody request: CreateGoodRequest): CreateGoodResponse {
-        val addedGood = goodService.add(request.name, request.description, request.price, request.externalId)
+        val addedGood = goodService.add(request.name, request.description, request.price, request.externalId, request.stock)
         return CreateGoodResponse(addedGood.id!!)
     }
 
@@ -43,7 +43,7 @@ class GoodController(
 
     @PutMapping("/{externalId}")
     fun updateGood(@PathVariable externalId: String, @RequestBody request: UpdateGoodRequest) {
-        goodService.update(externalId, request.name, request.description, request.price)
+        goodService.update(externalId, request.name, request.description, request.price, request.stock)
     }
 
     @DeleteMapping("/{externalId}")

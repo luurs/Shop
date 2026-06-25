@@ -10,6 +10,7 @@ data class GetGoodsListResponse(val goods: List<GoodDto>) {
         val name: String,
         val description: String,
         val price: BigDecimal,
-        val externalId: String
+        val externalId: String,
+        val stock: Int
     )
 }
