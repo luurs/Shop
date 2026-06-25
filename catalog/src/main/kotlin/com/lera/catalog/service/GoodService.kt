@@ -40,7 +40,7 @@ class GoodService(
                     name = name,
                     description = description,
                     price = price,
-                    stock = existing.stock + stock
+                    stock = stock
                 )
             )
         } ?: goodRepository.save(

@@ -25,7 +25,7 @@ class OutboxSchedulerIT : BaseIntegrationTest() {
     @DisplayName("шедулер публикует new сообщение в кафку и после этого помечает как sent")
     fun publishesAndMarksSent() {
         given().contentType(ContentType.JSON)
-            .body(CreateGoodRequest("pizza", "tasty pizza", BigDecimal.valueOf(100), "P122A"))
+            .body(CreateGoodRequest("pizza", "tasty pizza", BigDecimal.valueOf(100), "P122A", 5))
             .post("/goods/createGood")
             .then()
             .statusCode(200)
@@ -46,7 +46,7 @@ class OutboxSchedulerIT : BaseIntegrationTest() {
     @DisplayName("отправленные sent сообщения повторно не публикуются")
     fun doesNotResendSent() {
         given().contentType(ContentType.JSON)
-            .body(CreateGoodRequest("pizza", "tasty pizza", BigDecimal.valueOf(100), "P122A"))
+            .body(CreateGoodRequest("pizza", "tasty pizza", BigDecimal.valueOf(100), "P122A", 5))
             .post("/goods/createGood").then().statusCode(200)
 
         consumerAtTopicEnd("catalog.invalidate-goods-cache").use { consumer ->
