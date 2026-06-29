@@ -14,5 +14,6 @@ data class GoodEntity(
     val externalId: String,
     @Id
     val id: Long? = null,
-    val deleted: Boolean = false
+    val deleted: Boolean = false,
+    val stock: Int = 0
 )

@@ -4,7 +4,7 @@ databaseChangeLog:
       relativeToChangelogFile: true
 
   - include:
-      file: changeset/add-column.yaml
+      file: changeset/add-column-external-id.yaml
       relativeToChangelogFile: true
 
   - include:
@@ -13,4 +13,8 @@ databaseChangeLog:
 
   - include:
       file: changeset/add-column-deleted.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: changeset/add-column-stock.yaml
       relativeToChangelogFile: true

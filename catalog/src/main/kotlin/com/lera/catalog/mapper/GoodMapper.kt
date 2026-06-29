@@ -17,7 +17,8 @@ class GoodMapper {
             goodEntity.name,
             goodEntity.description,
             goodEntity.price,
-            goodEntity.externalId
+            goodEntity.externalId,
+            goodEntity.stock
         )
 
     fun fromEntityToGoodDto(goodEntity: GoodEntity): GetGoodResponse =
@@ -25,6 +26,7 @@ class GoodMapper {
             goodEntity.name,
             goodEntity.description,
             goodEntity.price,
-            goodEntity.externalId
+            goodEntity.externalId,
+            goodEntity.stock
         )
 }

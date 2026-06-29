@@ -6,4 +6,5 @@ data class UpdateGoodRequest(
     val name: String,
     val description: String,
     val price: BigDecimal,
+    val stock: Int
 )

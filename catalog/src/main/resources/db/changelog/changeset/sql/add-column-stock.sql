@@ -1,0 +1,3 @@
+ALTER TABLE IF EXISTS good
+    ADD COLUMN stock INTEGER NOT NULL DEFAULT 0
+    CHECK (stock >= 0);

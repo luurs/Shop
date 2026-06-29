@@ -30,7 +30,7 @@ class GoodControllerIT : BaseIntegrationTest() {
     fun createGoodTest() {
         given()
             .contentType(ContentType.JSON)
-            .body(CreateGoodRequest("pizza", "tasty pizza", BigDecimal.valueOf(100), "P123ZA"))
+            .body(CreateGoodRequest("pizza", "tasty pizza", BigDecimal.valueOf(100), "P123ZA", 5))
             .`when`()
             .post("/goods/createGood")
             .then()
@@ -43,6 +43,7 @@ class GoodControllerIT : BaseIntegrationTest() {
         assertThat(good.name).isEqualTo("pizza")
         assertThat(good.description).isEqualTo("tasty pizza")
         assertThat(good.price).isEqualTo(BigDecimal("100.00"))
+        assertThat(good.stock).isEqualTo(5)
 
         val outbox = outboxMessageRepository.findAll().toList()
         assertThat(outbox).hasSize(1)
@@ -56,8 +57,9 @@ class GoodControllerIT : BaseIntegrationTest() {
     @Test
     @DisplayName("Проверка возврата списка товаров по списку externalIds")
     fun getGoodsListTest() {
-        insertGood("pizza", "tasty pizza", 100, "P123ZA")
-        insertGood("apple", "green apple", 15, "A33LE")
+        insertGoodWithStock("pizza", "tasty pizza", 100, "P123ZA", 5)
+        insertGoodWithStock("apple", "green apple", 15, "A33LE", 10)
+
 
         val response = given()
             .contentType(ContentType.JSON)
@@ -78,22 +80,24 @@ class GoodControllerIT : BaseIntegrationTest() {
         assertThat(good1.description).isEqualTo("tasty pizza")
         assertThat(good1.price).isEqualTo(BigDecimal("100.00"))
         assertThat(good1.externalId).isEqualTo("P123ZA")
+        assertThat(good1.stock).isEqualTo(5)
 
         assertThat(good2.id).isEqualTo(2L)
         assertThat(good2.name).isEqualTo("apple")
         assertThat(good2.description).isEqualTo("green apple")
         assertThat(good2.price).isEqualTo(BigDecimal("15.00"))
         assertThat(good2.externalId).isEqualTo("A33LE")
+        assertThat(good2.stock).isEqualTo(10)
     }
 
     @Test
     @DisplayName("Проверка если товар есть в БД, его данные обновляются, а не создается новый товар")
     fun createGoodWhenAlreadyExists() {
-        insertGood("pizza", "tasty pizza", 100, "P123ZA")
+        insertGoodWithStock("pizza", "tasty pizza", 100, "P123ZA", 5)
 
         given()
             .contentType(ContentType.JSON)
-            .body(CreateGoodRequest("pizza2.0", "very tasty pizza", BigDecimal.valueOf(115), "P123ZA"))
+            .body(CreateGoodRequest("pizza2.0", "very tasty pizza", BigDecimal.valueOf(115), "P123ZA", 10))
             .post("/goods/createGood")
             .then()
             .statusCode(200)
@@ -106,6 +110,7 @@ class GoodControllerIT : BaseIntegrationTest() {
         assertThat(good.description).isEqualTo("very tasty pizza")
         assertThat(good.price).isEqualTo(BigDecimal("115.00"))
         assertThat(good.externalId).isEqualTo("P123ZA")
+        assertThat(good.stock).isEqualTo(10)
     }
 
     @Test
@@ -127,6 +132,7 @@ class GoodControllerIT : BaseIntegrationTest() {
         assertThat(response.description).isEqualTo("tasty pizza")
         assertThat(response.price).isEqualTo(BigDecimal("100.00"))
         assertThat(response.externalId).isEqualTo("P123ZA")
+        assertThat(response.stock).isEqualTo(0)
     }
 
     @Test
@@ -156,7 +162,8 @@ class GoodControllerIT : BaseIntegrationTest() {
                 UpdateGoodRequest(
                     "pizza2",
                     "very tasty pizza",
-                    BigDecimal.valueOf(111)
+                    BigDecimal.valueOf(111),
+                    7
                 )
             )
             .`when`()
@@ -169,6 +176,7 @@ class GoodControllerIT : BaseIntegrationTest() {
         assertThat(result.description).isEqualTo("very tasty pizza")
         assertThat(result.price).isEqualTo(BigDecimal("111.00"))
         assertThat(result.externalId).isEqualTo("P123ZA")
+        assertThat(result.stock).isEqualTo(7)
 
         val outbox = outboxMessageRepository.findAll().toList()
         assertThat(outbox).hasSize(1)
@@ -257,6 +265,13 @@ class GoodControllerIT : BaseIntegrationTest() {
         jdbcTemplate.update(
             "INSERT INTO good (name, description, price, external_id) VALUES (?, ?, ?, ?)",
             name, description, price, externalId
+        )
+    }
+
+    private fun insertGoodWithStock(name: String, description: String, price: Number, externalId: String, stock: Int) {
+        jdbcTemplate.update(
+            "INSERT INTO good (name, description, price, external_id, stock) VALUES (?, ?, ?, ?, ?)",
+            name, description, price, externalId, stock
         )
     }
 
